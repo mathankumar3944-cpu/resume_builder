@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Executive Resume Architect | Professional Edition</title>
+<title>Executive Architect | AI Resume Screening System</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -16,6 +16,7 @@
   --app-accent: #38bdf8;
   --app-border: #334155;
   --navy-primary: #163b56;
+  --match-color: #10b981;
 }
 
 * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -23,19 +24,27 @@ body { margin: 0; background: var(--app-dark); color: #f8fafc; display: flex; ov
 
 /* SIDEBAR UI */
 .sidebar {
-  width: 400px; height: 100vh; background: var(--app-panel);
+  width: 420px; height: 100vh; background: var(--app-panel);
   border-right: 1px solid var(--app-border); padding: 25px; overflow-y: auto;
 }
-.sidebar h2 { font-family: 'Plus Jakarta Sans'; font-size: 18px; color: var(--app-accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.sidebar h2 { font-family: 'Plus Jakarta Sans'; font-size: 18px; color: var(--app-accent); margin-bottom: 20px; text-transform: uppercase; }
 
-label { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-top: 15px; display: block; }
+/* AI ANALYZER CARD (Private Sidebar Tool) */
+.ai-card {
+  background: #0f172a; border-radius: 8px; padding: 15px; margin-bottom: 25px; border: 1px solid var(--app-border);
+}
+.ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.score-circle { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--match-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--match-color); transition: 0.3s; }
+
+/* FORM ELEMENTS */
+label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-top: 15px; display: block; }
 input, textarea, select {
   width: 100%; background: #0f172a; border: 1px solid var(--app-border); border-radius: 6px; 
   padding: 10px; color: #fff; margin-top: 5px; font-size: 13px;
 }
-input:focus { border-color: var(--app-accent); outline: none; }
+textarea { height: 80px; }
 
-.btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
+.btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; padding-bottom: 40px;}
 .btn { padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
 .btn-primary { background: var(--app-accent); color: #000; }
 .btn-secondary { background: #334155; color: #fff; }
@@ -54,57 +63,47 @@ input:focus { border-color: var(--app-accent); outline: none; }
 
 /* PHOTO STYLE */
 .photo-round { 
-  width: 130px; height: 130px; border-radius: 50%; 
-  object-fit: cover; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 20px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; text-align: center; color: rgba(0,0,0,0.5);
+  width: 120px; height: 120px; border-radius: 50%; 
+  object-fit: cover; border: 3px solid rgba(255,255,255,0.3); margin-bottom: 15px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
 }
 
 /* ---------------------------------
-   6 MODELS WITH REARRANGED ORDER
+   THE 6 PREMIUM THEMES (CLEAN)
 --------------------------------- */
-
-/* 1. MODERN NAVY */
-.tpl-navy { display: flex; min-height: 297mm; background: #ffffff; }
+.tpl-navy { display: flex; min-height: 297mm; background: #fff; }
 .tpl-navy .side { width: 33%; background: var(--navy-primary); color: #fff; padding: 40px 25px; }
 .tpl-navy .main { width: 67%; padding: 50px; }
-.tpl-navy .photo-round { background: #24527a; color: #fff; }
+.tpl-navy .photo-round { background: #24527a; }
 
-/* 2. THE CHANCELLOR */
 .tpl-chancellor { display: flex; min-height: 297mm; background: #fdfaf0; }
 .tpl-chancellor .side { width: 35%; background: #2d3436; color: #fab1a0; padding: 40px 25px; }
-.tpl-chancellor .main { width: 65%; padding: 50px; color: #2d3436; }
-.tpl-chancellor .photo-round { background: #40494b; color: #fab1a0; }
+.tpl-chancellor .main { width: 65%; padding: 50px; }
+.tpl-chancellor .photo-round { background: #40494b; }
 
-/* 3. SLATE TECH */
 .tpl-slate { display: flex; flex-direction: column; background: #f0f4f8; min-height: 297mm; }
-.tpl-slate .header { background: #334155; color: #f1f5f9; padding: 50px; display: flex; align-items: center; gap: 40px; }
-.tpl-slate .body { padding: 50px; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
-.tpl-slate .photo-round { background: #475569; color: #cbd5e1; }
+.tpl-slate .header { background: #334155; color: #f1f5f9; padding: 40px; display: flex; align-items: center; gap: 30px; }
+.tpl-slate .body { padding: 40px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+.tpl-slate .photo-round { background: #475569; }
 
-/* 4. MIDNIGHT SILVER */
 .tpl-midnight { padding: 50px; background: #1a1c23; color: #e2e8f0; min-height: 297mm; }
-.tpl-midnight .photo-round { background: #2d313d; color: #94a3b8; border-color: #38bdf8; }
-.tpl-midnight h1 { color: #ffffff; border-bottom: 2px solid #4a5568; padding-bottom: 15px; }
-.tpl-midnight .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 30px; }
+.tpl-midnight .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 20px; }
+.tpl-midnight .photo-round { background: #2d313d; border-color: var(--app-accent); }
 
-/* 5. THE PHOENIX */
 .tpl-phoenix { display: flex; min-height: 297mm; background: #fffcf2; }
-.tpl-phoenix .side { width: 32%; background: #4a0e0e; color: #fff; padding: 40px 20px; text-align: center; }
+.tpl-phoenix .side { width: 32%; background: #4a0e0e; color: #fff; padding: 30px 20px; text-align: center; }
 .tpl-phoenix .main { width: 68%; padding: 50px; }
-.tpl-phoenix .photo-round { background: #631717; color: #ffcece; margin-left: auto; margin-right: auto; }
+.tpl-phoenix .photo-round { background: #631717; margin: 0 auto 15px; }
 
-/* 6. OCEANIC */
-.tpl-oceanic { padding: 0; background: #f0fff4; min-height: 297mm; }
-.tpl-oceanic .top-bar { background: #004d4d; color: #ccffcc; padding: 60px; display: flex; justify-content: space-between; align-items: center; }
-.tpl-oceanic .container { padding: 50px; column-count: 2; column-gap: 40px; }
-.tpl-oceanic .photo-round { background: #006666; color: #ccffcc; }
+.tpl-oceanic { background: #f0fff4; min-height: 297mm; }
+.tpl-oceanic .top-bar { background: #004d4d; color: #ccffcc; padding: 40px; display: flex; justify-content: space-between; align-items: center; }
+.tpl-oceanic .container { padding: 40px; column-count: 2; column-gap: 30px; }
+.tpl-oceanic .photo-round { background: #006666; }
 
-/* GLOBAL TYPOGRAPHY */
-h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; margin-top: 25px; }
+/* TYPOGRAPHY */
+h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; margin-top: 20px; }
 .side h3 { border-color: rgba(255,255,255,0.2); }
-ul { padding-left: 15px; }
-li { font-size: 13px; margin-bottom: 6px; line-height: 1.5; }
+ul { padding-left: 15px; font-size: 13px; }
 p { font-size: 13px; line-height: 1.6; }
 </style>
 </head>
@@ -112,7 +111,17 @@ p { font-size: 13px; line-height: 1.6; }
 
 <div class="sidebar">
   <h2>Resume Architect</h2>
-  
+
+  <div class="ai-card">
+    <div class="ai-header">
+      <span style="font-size: 12px; font-weight: bold;">AI Optimization (Private)</span>
+      <div id="scoreDisplay" class="score-circle">0%</div>
+    </div>
+    <label style="margin-top:0">Target Job Description</label>
+    <textarea id="jobDesc" placeholder="Paste requirements here to analyze your content..." oninput="analyzeMatch()"></textarea>
+    <div id="aiAdvice" style="font-size: 11px; color: #94a3b8; margin-top: 8px;"></div>
+  </div>
+
   <label>Design Template</label>
   <select id="tplSelect" onchange="update()">
     <option value="tpl-navy">1. Modern Navy</option>
@@ -127,29 +136,29 @@ p { font-size: 13px; line-height: 1.6; }
   <input type="file" id="photo" accept="image/*">
 
   <label>Full Name</label>
-  <input id="name" placeholder="Johnathan Doe" oninput="update()">
+  <input id="name" placeholder="Robert Sterling" oninput="update()">
   
   <label>Designation</label>
-  <input id="role" placeholder="Executive Director" oninput="update()">
+  <input id="role" placeholder="Chief Operating Officer" oninput="update()">
 
-  <label>Email / Phone</label>
-  <input id="email" placeholder="j.doe@corporate.com" oninput="update()">
+  <label>Contact Info</label>
+  <input id="email" placeholder="r.sterling@corp.com" oninput="update()">
   <input id="phone" placeholder="+1 (555) 000-0000" oninput="update()">
 
   <label>Professional Profile</label>
-  <textarea id="profile" placeholder="Results-driven leader..." oninput="update()"></textarea>
+  <textarea id="profile" placeholder="Executive summary..." oninput="update(); analyzeMatch();"></textarea>
 
   <label>Experience (Line per job)</label>
-  <textarea id="experience" placeholder="Company A - Senior Role (2020-2024)" oninput="update()"></textarea>
+  <textarea id="experience" placeholder="CEO - Global Tech (2020-2024)" oninput="update(); analyzeMatch();"></textarea>
 
   <label>Education</label>
-  <textarea id="education" placeholder="Master of Business Administration, University Y" oninput="update()"></textarea>
+  <textarea id="education" placeholder="MBA, Stanford University" oninput="update()"></textarea>
 
   <label>Skills (Comma separated)</label>
-  <input id="skills" placeholder="Leadership, Strategy, Finance" oninput="update()">
+  <input id="skills" placeholder="Leadership, M&A, Strategy" oninput="update(); analyzeMatch();">
 
   <label>References / Links</label>
-  <textarea id="refInput" placeholder="www.linkedin.com/in/johndoe" oninput="update()"></textarea>
+  <textarea id="refInput" placeholder="www.portfolio.com" oninput="update()"></textarea>
 
   <div class="btn-group">
     <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
@@ -165,24 +174,54 @@ p { font-size: 13px; line-height: 1.6; }
 const id = x => document.getElementById(x);
 let photoData = "";
 
+// PRIVATE AI ANALYSIS LOGIC
+function analyzeMatch() {
+  const jobText = id("jobDesc").value.toLowerCase();
+  const resumeText = (id("skills").value + " " + id("experience").value + " " + id("profile").value).toLowerCase();
+  
+  if(!jobText || !resumeText) {
+    id("scoreDisplay").innerText = "0%";
+    return;
+  }
+
+  const keywords = jobText.match(/\b(\w{5,})\b/g) || [];
+  const uniqueKeys = [...new Set(keywords)];
+  let matches = 0;
+  let missing = [];
+
+  uniqueKeys.forEach(k => {
+    if(resumeText.includes(k)) matches++;
+    else missing.push(k);
+  });
+
+  const score = Math.min(Math.round((matches / uniqueKeys.length) * 120), 100);
+  id("scoreDisplay").innerText = score + "%";
+  
+  // Color change based on score
+  if(score > 75) id("scoreDisplay").style.borderColor = "#10b981";
+  else if(score > 40) id("scoreDisplay").style.borderColor = "#f59e0b";
+  else id("scoreDisplay").style.borderColor = "#ef4444";
+
+  id("aiAdvice").innerHTML = score > 75 ? "🔥 Strong Job Match!" : "💡 Missing Keywords: " + missing.slice(0, 3).join(", ");
+}
+
 function update() {
   const tpl = id("tplSelect").value;
   const name = id("name").value || "YOUR NAME";
-  const role = id("role").value || "YOUR JOB TITLE";
-  const email = id("email").value || "contact@email.com";
+  const role = id("role").value || "JOB TITLE";
+  const email = id("email").value || "email@example.com";
   const phone = id("phone").value || "000-000-0000";
-  const profile = id("profile").value || "Briefly describe your professional profile...";
-  const edu = id("education").value || "Your Education Details";
-  const ref = id("refInput").value || "Available upon request";
+  const profile = id("profile").value || "Executive summary...";
+  const edu = id("education").value || "Education details...";
+  const ref = id("refInput").value || "References available...";
   const skills = id("skills").value.split(",").filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join("");
   const exp = id("experience").value.split("\n").filter(e => e.trim()).map(e => `<li>${e}</li>`).join("");
-  
+
   const img = photoData ? `<img src="${photoData}" class="photo-round">` : `<div class="photo-round">Photo</div>`;
 
   let html = "";
-
   if(tpl === 'tpl-navy') {
-    html = `<div class="tpl-navy"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1 style="color:var(--navy-primary); margin:0">${name}</h1><p style="font-weight:700; color:#666">${role}</p><h3>Profile</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>References</h3><p>${ref}</p></div></div>`;
+    html = `<div class="tpl-navy"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1 style="color:var(--navy-primary); margin:0">${name}</h1><p style="font-weight:700; color:#666">${role}</p><h3>Profile</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
   } else if(tpl === 'tpl-chancellor') {
     html = `<div class="tpl-chancellor"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1>${name}</h1><p style="color:#d63031; font-weight:700">${role}</p><h3>Profile</h3><p>${profile}</p><h3>History</h3><ul>${exp}</ul><h3>Ref</h3><p>${ref}</p></div></div>`;
   } else if(tpl === 'tpl-slate') {
@@ -190,9 +229,9 @@ function update() {
   } else if(tpl === 'tpl-midnight') {
     html = `<div class="tpl-midnight"><h1>${name}</h1><p style="color:var(--app-accent)">${role} | ${email}</p><div class="grid"><div>${img}<h3>Education</h3><p>${edu}</p><h3>Expertise</h3><ul>${skills}</ul></div><div><h3>Executive Summary</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div></div>`;
   } else if(tpl === 'tpl-phoenix') {
-    html = `<div class="tpl-phoenix"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p></div><div class="main"><h1 style="color:#4a0e0e; font-size:40px; margin:0">${name}</h1><p>${role}</p><h3>Background</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul style="column-count:2">${skills}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
+    html = `<div class="tpl-phoenix"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p></div><div class="main"><h1 style="color:#4a0e0e; font-size:40px; margin:0">${name}</h1><p>${role}</p><h3>Background</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
   } else {
-    html = `<div class="tpl-oceanic"><div class="top-bar"><div><h1 style="margin:0">${name}</h1><p>${role}</p></div>${img}</div><div class="container"><h3>Summary</h3><p>${profile}</p><h3>Education</h3><p>${edu}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><h3>Contact</h3><p>${email}<br>${phone}</p><h3>Ref</h3><p>${ref}</p></div></div>`;
+    html = `<div class="tpl-oceanic"><div class="top-bar"><div><h1 style="margin:0">${name}</h1><p>${role}</p></div>${img}</div><div class="container"><h3>Summary</h3><p>${profile}</p><h3>Education</h3><p>${edu}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><p>${email}<br>${phone}</p><h3>Ref</h3><p>${ref}</p></div></div>`;
   }
 
   id("resume").innerHTML = html;
