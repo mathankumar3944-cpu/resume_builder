@@ -1,369 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURORA_DEBUGGER | Secure Edition</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --aurora-green: #00ffcc;
-            --aurora-purple: #a020f0;
-            --aurora-blue: #00d4ff;
-            --terminal-bg: rgba(2, 12, 20, 0.85);
-            --glow: 0 0 20px rgba(0, 255, 204, 0.4);
-            --warn-red: #ff4b2b;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Architect | AI Resume Screening System</title>
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; font-family: 'Rajdhani', sans-serif;
-            background: #02050a;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-        .aurora-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; background: linear-gradient(to bottom, #02050a, #051923);
-        }
+<style>
+:root {
+  --app-dark: #0f172a;
+  --app-panel: #1e293b;
+  --app-accent: #38bdf8;
+  --app-border: #334155;
+  --navy-primary: #163b56;
+  --match-color: #10b981;
+}
 
-        .aurora-waves {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, var(--aurora-green) 0%, transparent 40%),
-                radial-gradient(circle at 80% 40%, var(--aurora-blue) 0%, transparent 40%),
-                radial-gradient(circle at 50% 20%, var(--aurora-purple) 0%, transparent 50%);
-            filter: blur(80px); opacity: 0.4;
-            animation: aurora-drift 12s ease-in-out infinite alternate;
-        }
+* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { margin: 0; background: var(--app-dark); color: #f8fafc; display: flex; overflow: hidden; }
 
-        @keyframes aurora-drift {
-            0% { transform: scale(1) translate(0, 0); opacity: 0.3; }
-            50% { transform: scale(1.1) translate(2%, 5%); opacity: 0.5; }
-            100% { transform: scale(1) translate(-2%, -3%); opacity: 0.3; }
-        }
+/* SIDEBAR UI */
+.sidebar {
+  width: 420px; height: 100vh; background: var(--app-panel);
+  border-right: 1px solid var(--app-border); padding: 25px; overflow-y: auto;
+}
+.sidebar h2 { font-family: 'Plus Jakarta Sans'; font-size: 18px; color: var(--app-accent); margin-bottom: 20px; text-transform: uppercase; }
 
-        canvas#starfield { position: fixed; top: 0; left: 0; z-index: -1; }
+/* AI ANALYZER CARD (Private Sidebar Tool) */
+.ai-card {
+  background: #0f172a; border-radius: 8px; padding: 15px; margin-bottom: 25px; border: 1px solid var(--app-border);
+}
+.ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.score-circle { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--match-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--match-color); transition: 0.3s; }
 
-        .master-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
+/* FORM ELEMENTS */
+label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-top: 15px; display: block; }
+input, textarea, select {
+  width: 100%; background: #0f172a; border: 1px solid var(--app-border); border-radius: 6px;
+  padding: 10px; color: #fff; margin-top: 5px; font-size: 13px;
+}
+textarea { height: 80px; }
 
-        .terminal {
-            background: var(--terminal-bg); width: 95vw; max-width: 1100px;
-            height: 85vh; border-radius: 20px; border: 1px solid rgba(0, 255, 204, 0.3);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), var(--glow);
-            backdrop-filter: blur(15px); display: flex; flex-direction: column;
-            overflow: hidden; animation: terminal-float 6s ease-in-out infinite;
-        }
+.btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; padding-bottom: 40px;}
+.btn { padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+.btn-primary { background: var(--app-accent); color: #000; }
+.btn-secondary { background: #334155; color: #fff; }
 
-        @keyframes terminal-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+/* VIEWPORT */
+.viewport {
+  flex-grow: 1; height: 100vh; padding: 40px; overflow-y: auto;
+  background: radial-gradient(circle, #1e293b 1px, transparent 1px); background-size: 25px 25px;
+  display: flex; justify-content: center;
+}
 
-        .status-bar {
-            background: rgba(0, 255, 204, 0.1); padding: 10px 25px;
-            display: flex; justify-content: space-between;
-            font-family: 'Share Tech Mono', monospace; color: var(--aurora-green);
-            font-size: 0.8rem; border-bottom: 1px solid rgba(0, 255, 204, 0.2);
-        }
+.resume-paper {
+  width: 210mm; min-height: 297mm; background: #fff; color: #1e293b;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative;
+}
 
-        .content-area { display: flex; flex: 1; padding: 25px; gap: 20px; overflow-y: auto; }
-        .pane { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* PHOTO STYLE */
+.photo-round {
+  width: 120px; height: 120px; border-radius: 50%;
+  object-fit: cover; border: 3px solid rgba(255,255,255,0.3); margin-bottom: 15px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+}
 
-        .start-text { font-size: 3rem; color: #fff; margin-bottom: 20px; font-weight: 700; }
-        
-        select {
-            background: #000; color: var(--aurora-green); border: 2px solid var(--aurora-green); 
-            padding: 12px 30px; font-size: 1.3rem; border-radius: 10px; font-family: 'Rajdhani';
-            cursor: pointer; outline: none;
-        }
+/* ---------------------------------
+   THE 6 PREMIUM THEMES (CLEAN)
+--------------------------------- */
+.tpl-navy { display: flex; min-height: 297mm; background: #fff; }
+.tpl-navy .side { width: 33%; background: var(--navy-primary); color: #fff; padding: 40px 25px; }
+.tpl-navy .main { width: 67%; padding: 50px; }
+.tpl-navy .photo-round { background: #24527a; }
 
-        .btn-patch {
-            background: var(--aurora-green); color: #020c14; border: none;
-            padding: 15px 35px; margin-top: 15px; font-family: 'Rajdhani';
-            font-weight: 900; font-size: 1.2rem; cursor: pointer;
-            border-radius: 8px; transition: 0.3s; text-transform: uppercase;
-        }
+.tpl-chancellor { display: flex; min-height: 297mm; background: #fdfaf0; }
+.tpl-chancellor .side { width: 35%; background: #2d3436; color: #fab1a0; padding: 40px 25px; }
+.tpl-chancellor .main { width: 65%; padding: 50px; }
+.tpl-chancellor .photo-round { background: #40494b; }
 
-        .btn-patch:hover { transform: translateY(-2px); box-shadow: 0 0 25px var(--aurora-green); background: #fff; }
+.tpl-slate { display: flex; flex-direction: column; background: #f0f4f8; min-height: 297mm; }
+.tpl-slate .header { background: #334155; color: #f1f5f9; padding: 40px; display: flex; align-items: center; gap: 30px; }
+.tpl-slate .body { padding: 40px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+.tpl-slate .photo-round { background: #475569; }
 
-        .label { font-weight: 700; letter-spacing: 2px; color: var(--aurora-green); margin-bottom: 8px; font-size: 1rem; }
-        .code-screen {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #eee;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            flex-grow: 1;
-            white-space: pre; /* Crucial for multi-line display */
-            overflow-x: auto;
-        }
+.tpl-midnight { padding: 50px; background: #1a1c23; color: #e2e8f0; min-height: 297mm; }
+.tpl-midnight .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 20px; }
+.tpl-midnight .photo-round { background: #2d313d; border-color: var(--app-accent); }
 
-        textarea {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--aurora-green);
-            border-radius: 10px; padding: 15px; color: #fff;
-            font-family: 'Share Tech Mono', monospace; font-size: 1rem;
-            height: 150px; resize: none; outline: none; transition: 0.3s;
-        }
+.tpl-phoenix { display: flex; min-height: 297mm; background: #fffcf2; }
+.tpl-phoenix .side { width: 32%; background: #4a0e0e; color: #fff; padding: 30px 20px; text-align: center; }
+.tpl-phoenix .main { width: 68%; padding: 50px; }
+.tpl-phoenix .photo-round { background: #631717; margin: 0 auto 15px; }
 
-        #modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
+.tpl-oceanic { background: #f0fff4; min-height: 297mm; }
+.tpl-oceanic .top-bar { background: #004d4d; color: #ccffcc; padding: 40px; display: flex; justify-content: space-between; align-items: center; }
+.tpl-oceanic .container { padding: 40px; column-count: 2; column-gap: 30px; }
+.tpl-oceanic .photo-round { background: #006666; }
 
-        .modal-card {
-            background: #0a141d; border: 2px solid var(--aurora-blue);
-            padding: 40px; border-radius: 15px; text-align: center; max-width: 450px;
-        }
-
-        .answer-reveal {
-            font-family: 'Share Tech Mono', monospace; font-size: 1.4rem;
-            color: var(--aurora-green); background: rgba(0,0,0,0.6);
-            padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px dashed var(--aurora-green);
-        }
-
-        .hidden { display: none; }
-    </style>
+/* TYPOGRAPHY */
+h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; margin-top: 20px; }
+.side h3 { border-color: rgba(255,255,255,0.2); }
+ul { padding-left: 15px; font-size: 13px; }
+p { font-size: 13px; line-height: 1.6; }
+</style>
 </head>
 <body>
 
-<div class="aurora-bg"><div class="aurora-waves"></div></div>
-<canvas id="starfield"></canvas>
+<div class="sidebar">
+  <h2>Resume Architect</h2>
 
-<div id="modal-overlay">
-    <div class="modal-card animate__animated animate__zoomIn">
-        <h2 style="color:var(--aurora-blue); margin-top:0;">SESSION TERMINATED</h2>
-        <p style="color: #ccc;">Access to this language has been locked for this session.</p>
-        <div class="answer-reveal" id="answer-text"></div>
-        <button class="btn-patch" onclick="resetToHome()">RETURN TO HOME</button>
+  <div class="ai-card">
+    <div class="ai-header">
+      <span style="font-size: 12px; font-weight: bold;">AI Optimization (Private)</span>
+      <div id="scoreDisplay" class="score-circle">0%</div>
     </div>
+    <label style="margin-top:0">Target Job Description</label>
+    <textarea id="jobDesc" placeholder="Paste requirements here to analyze your content..." oninput="analyzeMatch()"></textarea>
+    <div id="aiAdvice" style="font-size: 11px; color: #94a3b8; margin-top: 8px;"></div>
+  </div>
+
+  <label>Design Template</label>
+  <select id="tplSelect" onchange="update()">
+    <option value="tpl-navy">1. Modern Navy</option>
+    <option value="tpl-chancellor">2. The Chancellor</option>
+    <option value="tpl-slate">3. Slate Tech</option>
+    <option value="tpl-midnight">4. Midnight Silver</option>
+    <option value="tpl-phoenix">5. The Phoenix</option>
+    <option value="tpl-oceanic">6. Oceanic</option>
+  </select>
+
+  <label>Profile Picture</label>
+  <input type="file" id="photo" accept="image/*">
+
+  <label>Full Name</label>
+  <input id="name" placeholder="Robert Sterling" oninput="update()">
+
+  <label>Designation</label>
+  <input id="role" placeholder="Chief Operating Officer" oninput="update()">
+
+  <label>Contact Info</label>
+  <input id="email" placeholder="r.sterling@corp.com" oninput="update()">
+  <input id="phone" placeholder="+1 (555) 000-0000" oninput="update()">
+
+  <label>Professional Profile</label>
+  <textarea id="profile" placeholder="Executive summary..." oninput="update(); analyzeMatch();"></textarea>
+
+  <label>Experience (Line per job)</label>
+  <textarea id="experience" placeholder="CEO - Global Tech (2020-2024)" oninput="update(); analyzeMatch();"></textarea>
+
+  <label>Education</label>
+  <textarea id="education" placeholder="MBA, Stanford University" oninput="update()"></textarea>
+
+  <label>Skills (Comma separated)</label>
+  <input id="skills" placeholder="Leadership, M&A, Strategy" oninput="update(); analyzeMatch();">
+
+  <label>References / Links</label>
+  <textarea id="refInput" placeholder="www.portfolio.com" oninput="update()"></textarea>
+
+  <div class="btn-group">
+    <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+    <button class="btn btn-secondary" onclick="window.print()">Print</button>
+  </div>
 </div>
 
-<div id="toast-msg" class="animate__animated hidden" style="position: fixed; top: 15%; left: 50%; transform: translateX(-50%); font-size: 2rem; font-weight: 900; z-index: 1000; pointer-events: none;"></div>
-
-<div class="master-container">
-    <div class="terminal">
-        <div class="status-bar">
-            <span>AURORA_SYSTEMS_V2.0</span>
-            <span id="level-tracker">LVL: --</span>
-            <span>UPLINK: ONLINE</span>
-        </div>
-
-        <div id="start-screen" style="text-align: center; margin-top: 80px;">
-            <h1 class="start-text">CHOOSE LANGUAGE</h1>
-            <select id="lang-select">
-                <option value="Python">Python</option>
-                <option value="JavaScript">JavaScript</option>
-                <option value="C">C</option>
-                <option value="C++">C++</option>
-                <option value="Java">Java</option>
-                <option value="HTML">HTML</option>
-                <option value="MySQL">MySQL</option>
-            </select><br><br>
-            <button class="btn-patch" style="width: 280px;" onclick="startGame()">START CHALLENGE</button>
-            <p id="lockout-status" style="color: var(--warn-red); margin-top: 15px; font-weight: bold;"></p>
-        </div>
-
-        <div id="game-screen" class="content-area hidden">
-            <div class="pane">
-                <div class="label">ENCRYPTED_DATA</div>
-                <div id="code-box" class="code-screen"></div>
-                <p id="objective-text" style="color: var(--aurora-blue); font-size: 0.9rem; margin-top: 10px; font-weight: bold;"></p>
-            </div>
-            
-            <div class="pane">
-                <div class="label">REPAIR_BUFFER</div>
-                <textarea id="user-input" placeholder="Enter fix..."></textarea>
-                <button class="btn-patch" onclick="checkFix()">PATCH CODE</button>
-                <button style="background:transparent; border:1px solid var(--warn-red); color:var(--warn-red); margin-top:12px; cursor:pointer; padding:8px; font-family:'Rajdhani'; font-weight:bold; border-radius:5px;" onclick="giveUp()">REVEAL ANSWER</button>
-            </div>
-        </div>
-    </div>
+<div class="viewport">
+  <div class="resume-paper" id="resume"></div>
 </div>
 
 <script>
-    // --- STARFIELD BACKGROUND ---
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    function initStars() {
-        stars = [];
-        for(let i=0; i<200; i++) stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2, opacity: Math.random(), speed: Math.random() * 0.02 });
-    }
-    function drawStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        stars.forEach(s => {
-            s.opacity += s.speed; if(s.opacity > 1 || s.opacity < 0) s.speed = -s.speed;
-            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-            ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-        });
-        requestAnimationFrame(drawStars);
-    }
-    window.addEventListener('resize', resize); resize(); initStars(); drawStars();
+const id = x => document.getElementById(x);
+let photoData = "";
 
-    // --- FULL 10-LEVEL DATABASE ---
-    const database = {
-        "Python": [
-            { bug: `def calculate_area(radius)\n    pi = 3.14159\n    area = pi * (radius ** 2)\n    return area\n\nprint(calculate_area(5))`, fix: "radius):", obj: "Fix the function definition syntax." },
-            { bug: `def check_status(score):\n    if score > 90\n        return "A"\n    else\n        return "B"\n\nprint(check_status(95))`, fix: "90:", obj: "Add the missing colon in the IF statement." },
-            { bug: `class Player:\n    def __init__(self, name):\n        self.name = name\n        self.health = 100\n\np1 = Player("Aurora")\nprint p1.name`, fix: "print(p1.name)", obj: "Update the print statement for Python 3." },
-            { bug: `items = ["core", "cpu", "ram"]\nfor i in items\n    print("Checking component...")\n    print(i)\n    print("Status: OK")`, fix: "in items:", obj: "Complete the FOR loop header." },
-            { bug: `def login(user):\n    try:\n        print("Attempting login for: " + user)\n        res = 10 / 0\n    except\n        print("Login error detected")`, fix: "except:", obj: "Add the missing colon to the except block." },
-            { bug: `def sync_data(data):\n    if data == None:\n        return False\nreturn True\n\nsync_data([])`, fix: "    return True", obj: "Fix the indentation of the return statement." },
-            { bug: `import math_lib\n\ndef get_sqrt(n):\n    return math.sqrt(n)\n\nprint(get_sqrt(16))`, fix: "import math", obj: "Import the correct standard math library." },
-            { bug: `val = 100\nif val == 100:\n    msg = "Voltage: " + val\n    print(msg)`, fix: "str(val)", obj: "Cast the integer to a string for concatenation." },
-            { bug: `def main():\n    tasks = ["A", "B"]\n    while True\n        if not tasks: break\n        print(tasks.pop())\n\nmain()`, fix: "True:", obj: "Add the missing colon to the while loop." },
-            { bug: `data = {\n    "id": 101\n    "type": "admin"\n    "active": True\n}`, fix: "101,", obj: "Add the missing comma in the dictionary." }
-        ],
-        "JavaScript": [
-            { bug: `const initSystem = () => {\n    const version = 1.2;\n    version = 1.3;\n    console.log("System version: " + version);\n};`, fix: "let version", obj: "A 'const' variable cannot be reassigned." },
-            { bug: `function updateUI() {\n    const element = document.getElementByID("status");\n    element.innerText = "Processing...";\n    return true;\n}`, fix: "ById", obj: "Correct the camelCase for the DOM method." },
-            { bug: `const timer = (msg) => {\n    setTimeout(console.log(msg), 1000);\n    console.log("Timer set.");\n};\n\ntimer("Done!");`, fix: "() => console.log", obj: "Wrap the code in a function to delay execution." },
-            { bug: `const user = {\n    name: "Dev",\n    rank: 5\n    access: true\n};\nconsole.log(user);`, fix: "5,", obj: "Add the missing comma between object properties." },
-            { bug: `async function fetchData() {\n    const res = fetch("https://api.io");\n    const data = res.json();\n    console.log(data);\n}`, fix: "await", obj: "The fetch and json methods must be awaited." },
-            { bug: `const colors = ["red", "blue"];\ncolors.forEach(c => {\n    if(c == "red")\n        console.log("Found Red");\n});`, fix: "===", obj: "Use strict equality for comparisons." },
-            { bug: `function notify() {\n    alert("System Failure");\n}\n\nbtn.onclick = notify;`, fix: "document.", obj: "The button variable is undefined; use document selector." },
-            { bug: `const path = "C:/Users/Admin;\nconsole.log("Path set to: " + path);`, fix: "Admin\";", obj: "The string literal is not properly closed." },
-            { bug: `import { auth } from firebase-auth\n\nfunction sign() {\n    return auth.signIn();\n}`, fix: "'firebase-auth'", obj: "Module names in imports must be in quotes." },
-            { bug: `const p = new Promise((resolve) => {\n    resolve("OK");\n});\np.then(console.log("Finish"));`, fix: ".then(()", obj: "The .then() method requires a callback function." }
-        ],
-        "C": [
-            { bug: `#include <stdio.h>\n\nint main() {\n    printf(Access Granted);\n    return 0;\n}`, fix: "\"Access Granted\"", obj: "Strings in C must be enclosed in double quotes." },
-            { bug: `#include <stdio.h>\n\nint main() {\n    int count = 10\n    printf("Count: %d", count);\n    return 0;\n}`, fix: "10;", obj: "Add the missing semicolon at the end of the line." },
-            { bug: `int main() {\n    int buffer;\n    printf("Input code: ");\n    scanf("%d", buffer);\n    return 0;\n}`, fix: "&buffer", obj: "scanf requires the address-of operator (&)." },
-            { bug: `void main() {\n    printf("Initializing kernel...\\n");\n    printf("Ready.\\n");\n}`, fix: "int main()", obj: "The standard entry point must return an integer." },
-            { bug: `#include <stdio.h>\n\nint main() {\n    float temp = 98.6\n    printf("Temp: %d", temp);\n    return 0;\n}`, fix: "%f", obj: "Use the correct format specifier for a float." },
-            { bug: `int main() {\n    int i;\n    for(i=0, i<5, i++) {\n        printf("Ping\\n");\n    }\n    return 0;\n}`, fix: "i=0; i<5; i++", obj: "Semicolons are required to separate for-loop parts." },
-            { bug: `int main() {\n    int arr[2] = {1, 2, 3, 4};\n    return 0;\n}`, fix: "arr[4]", obj: "The array size is too small for the given data." },
-            { bug: `int main() {\n    int *ptr = malloc(sizeof(int));\n    *ptr = 10;\n    return 0;\n}`, fix: "(int*)", obj: "Cast the return of malloc to an integer pointer." },
-            { bug: `int main() {\n    int x = 5;\n    if x == 5 {\n        printf("Valid");\n    }\n    return 0;\n}`, fix: "if (x == 5)", obj: "Conditions in C must be wrapped in parentheses." },
-            { bug: `int main() {\n    char cmd = 'Q';\n    printf("Command: %c", cmd)\n    return 0;\n}`, fix: "cmd);", obj: "Missing semicolon after the printf function." }
-        ],
-        "C++": [
-            { bug: `#include <iostream>\n\nint main() {\n    cout << "Link established" << endl;\n    return 0;\n}`, fix: "std::", obj: "Add the standard namespace prefix to cout." },
-            { bug: `#include <vector>\n\nint main() {\n    std::vector<int> v;\n    v.add(10);\n    return 0;\n}`, fix: "push_back", obj: "Correct the method for adding vector elements." },
-            { bug: `#include <string>\n\nint main() {\n    std::string user = 'Guest';\n    return 0;\n}`, fix: "\"Guest\"", obj: "C++ strings require double quotes." },
-            { bug: `class Server {\n    int port = 8080;\n};\n\nint main() {\n    Server s;\n    s.port = 9000;\n}`, fix: "public:", obj: "Make class members accessible from outside." },
-            { bug: `class Node {\n    int id;\n};\n\nint main() {\n    Node* n = Node();\n    return 0;\n}`, fix: "new Node()", obj: "Use 'new' for dynamic memory allocation." },
-            { bug: `#include <iostream.h>\n\nint main() {\n    std::cout << "Booting...";\n    return 0;\n}`, fix: "<iostream>", obj: "Use the modern C++ header (omit the .h)." },
-            { bug: `int main() {\n    int& ref;\n    int x = 10;\n    ref = x;\n    return 0;\n}`, fix: "ref = x", obj: "References must be initialized upon declaration." },
-            { bug: `int main() {\n    int* arr = new int[10];\n    delete arr;\n    return 0;\n}`, fix: "delete[]", obj: "Use the array delete operator for memory cleanup." },
-            { bug: `template <class T>\nvoid log(T data) {\n    std::cout << data;\n}\n\nlog<int>(10);`, fix: "T data", obj: "The template usage here requires proper signature." },
-            { bug: `int main() {\n    int a, b;\n    std::cin >> a >> b\n    return 0;\n}`, fix: "b;", obj: "Missing semicolon after the cin statement." }
-        ],
-        "Java": [
-            { bug: `public class Main {\n    public void main(String[] args) {\n        System.out.println("Started");\n    }\n}`, fix: "static void", obj: "The main method must be static." },
-            { bug: `public class Data {\n    String value = 100;\n}`, fix: "int value", obj: "Correct the incompatible data type assignment." },
-            { bug: `public class Logic {\n    public static void run() {\n        System.out.print("Running")\n    }\n}`, fix: "println", obj: "Use the method that adds a newline character." },
-            { bug: `String input = "Admin";\nif (input == "Admin") {\n    System.out.println("Access OK");\n}`, fix: ".equals(", obj: "Use .equals() for string value comparison." },
-            { bug: `int[] numbers = new int(10);\nnumbers[0] = 1;`, fix: "new int[10]", obj: "Use square brackets for array initialization." },
-            { bug: `import java.util.List;\n\nList<String> logs = new List<>();`, fix: "ArrayList", obj: "List is an interface; instantiate ArrayList instead." },
-            { bug: `try {\n    int res = 1/0;\n} catch {\n    System.out.println("Error");\n}`, fix: "(Exception e)", obj: "Catch blocks require an exception parameter." },
-            { bug: `public int getLevel() {\n    System.out.println("Lvl 1");\n    return;\n}`, fix: "void", obj: "A method returning 'int' must return a value." },
-            { bug: `final int MAX = 100;\nif (true) {\n    MAX = 200;\n}`, fix: "int MAX", obj: "Remove 'final' to allow variable reassignment." },
-            { bug: `package com.aurora\n\npublic class Core {}`, fix: "aurora;", obj: "Add the missing semicolon to the package declaration." }
-        ],
-        "HTML": [
-            { bug: `<img src="avatar.png">\n<p>Profile Picture</p>`, fix: "alt=", obj: "Add missing accessibility alt text." },
-            { bug: `<a link="https://google.com">Search</a>\n<nav>Footer</nav>`, fix: "href=", obj: "The attribute for links is 'href', not 'link'." },
-            { bug: `<ul>\n    <li>System Check</li>\n    <li>Kernel Boot\n    <li>Interface Sync</li>`, fix: "</ul>", obj: "Close the unordered list container." },
-            { bug: `<div class=master-container>\n    <h1>Header</h1>\n</div>`, fix: "\"master-container\"", obj: "Wrap attribute values in double quotes." },
-            { bug: `<script "app.js"></script>\n<p>Loading...</p>`, fix: "src=", obj: "Specify the script source using 'src='." },
-            { bug: `<form>\n    <input type="text" placeholder="User">\n</form>`, fix: "id=", obj: "Add an ID attribute to the input field." },
-            { bug: `<h1>System Status</h3>\n<p>All green.</p>`, fix: "</h1>", obj: "Fix the mismatched header tags (h1 vs h3)." },
-            { bug: `<table>\n    <td>Unit 01</td>\n    <td>Active</td>\n</table>`, fix: "<tr>", obj: "Wrap table cells inside a table row (tr)." },
-            { bug: `<style>\n    .text { color: #00ffcc; }\n</style>`, fix: "color:", obj: "Complete the CSS property declaration." },
-            { bug: `<!DOCTYPE>\n<html>\n<head><title>Debugger</title></head>`, fix: "html", obj: "Complete the doctype declaration." }
-        ],
-        "MySQL": [
-            { bug: `-- Fetch all active users\nSELECT * users WHERE status = 'active';`, fix: "FROM", obj: "Specify the table using the FROM keyword." },
-            { bug: `-- Update device status\nUPDATE hardware SET status = 'offline';`, fix: "WHERE", obj: "Add a condition to prevent updating all rows." },
-            { bug: `-- Insert reboot log\nINSERT INTO logs (id, msg) VALUE (1, 'reboot');`, fix: "VALUES", obj: "Correct the pluralization of the VALUES keyword." },
-            { bug: `-- Sort logs by time\nSELECT * FROM system_logs ORDER timestamp;`, fix: "BY", obj: "Complete the ORDER BY clause." },
-            { bug: `-- Clear specific cache\nDELETE FROM cache (id = 505);`, fix: "WHERE", obj: "Use the WHERE keyword for row filtering." },
-            { bug: `-- Create new table\nCREATE TABLE (id INT, name VARCHAR(50));`, fix: "TABLE name", obj: "Specify a name for the new table." },
-            { bug: `-- Count active connections\nSELECT COUNT* FROM connections;`, fix: "(*)", obj: "Wrap the count parameter in parentheses." },
-            { bug: `-- Paginate results\nSELECT * FROM events LIMIT 0, 10;`, fix: "OFFSET", obj: "Define the offset explicitly." },
-            { bug: `-- Group by department\nSELECT department FROM staff GROUP department;`, fix: "BY", obj: "Complete the GROUP BY clause." },
-            { bug: `-- Inner join users and profiles\nSELECT * FROM users JOIN profiles ON uid=pid;`, fix: "INNER", obj: "Specify the join type (e.g., INNER)." }
-        ]
-    };
+// PRIVATE AI ANALYSIS LOGIC
+function analyzeMatch() {
+  const jobText = id("jobDesc").value.toLowerCase();
+  const resumeText = (id("skills").value + " " + id("experience").value + " " + id("profile").value).toLowerCase();
 
-    let sessionState = { lockedLangs: {} };
-    let current = { lang: "", lv: 0 };
+  if(!jobText || !resumeText) {
+    id("scoreDisplay").innerText = "0%";
+    return;
+  }
 
-    function startGame() {
-        current.lang = document.getElementById('lang-select').value;
-        if(sessionState.lockedLangs[current.lang] !== undefined) {
-            document.getElementById('lockout-status').innerText = "ERROR: ACCESS REVOKED.";
-            return;
-        }
-        current.lv = 0;
-        document.getElementById('lockout-status').innerText = "";
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
-        renderLevel();
-    }
+  const keywords = jobText.match(/\b(\w{5,})\b/g) || [];
+  const uniqueKeys = [...new Set(keywords)];
+  let matches = 0;
+  let missing = [];
 
-    function renderLevel() {
-        const langData = database[current.lang];
-        const task = langData[current.lv];
-        document.getElementById('code-box').innerText = task.bug;
-        document.getElementById('objective-text').innerText = "OBJECTIVE: " + task.obj;
-        document.getElementById('user-input').value = "";
-        document.getElementById('level-tracker').innerText = `LVL: ${current.lv + 1}/${langData.length}`;
-        document.getElementById('user-input').focus();
-    }
+  uniqueKeys.forEach(k => {
+    if(resumeText.includes(k)) matches++;
+    else missing.push(k);
+  });
 
-    function checkFix() {
-        const input = document.getElementById('user-input').value;
-        const langData = database[current.lang];
-        const solution = langData[current.lv].fix;
-        
-        if(input.toLowerCase().includes(solution.toLowerCase())) {
-            showToast("ACCESS GRANTED", "var(--aurora-green)");
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            current.lv++;
-            if(current.lv < langData.length) {
-                setTimeout(renderLevel, 1000);
-            } else { 
-                alert("LANGUAGE MASTERED!"); 
-                resetToHome(); 
-            }
-        } else {
-            showToast("ACCESS DENIED", "var(--warn-red)");
-        }
-    }
+  const score = Math.min(Math.round((matches / uniqueKeys.length) * 120), 100);
+  id("scoreDisplay").innerText = score + "%";
 
-    function showToast(msg, color) {
-        const t = document.getElementById('toast-msg');
-        t.innerText = msg; t.style.color = color;
-        t.classList.remove('hidden', 'animate__fadeOutUp');
-        t.classList.add('animate__fadeInDown');
-        setTimeout(() => { t.classList.add('animate__fadeOutUp'); }, 800);
-    }
+  // Color change based on score
+  if(score > 75) id("scoreDisplay").style.borderColor = "#10b981";
+  else if(score > 40) id("scoreDisplay").style.borderColor = "#f59e0b";
+  else id("scoreDisplay").style.borderColor = "#ef4444";
 
-    function giveUp() {
-        const solution = database[current.lang][current.lv].fix;
-        document.getElementById('answer-text').innerText = "REVEALED: " + solution;
-        document.getElementById('modal-overlay').style.display = 'flex';
-        sessionState.lockedLangs[current.lang] = true;
-        const drop = document.getElementById('lang-select');
-        for (let i = 0; i < drop.options.length; i++) {
-            if (drop.options[i].value === current.lang) {
-                drop.options[i].disabled = true;
-                drop.options[i].text = current.lang + " (LOCKED)";
-            }
-        }
-    }
+  id("aiAdvice").innerHTML = score > 75 ? "🔥 Strong Job Match!" : "💡 Missing Keywords: " + missing.slice(0, 3).join(", ");
+}
 
-    function resetToHome() {
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.getElementById('game-screen').classList.add('hidden');
-        document.getElementById('start-screen').classList.remove('hidden');
-    }
+function update() {
+  const tpl = id("tplSelect").value;
+  const name = id("name").value || "YOUR NAME";
+  const role = id("role").value || "JOB TITLE";
+  const email = id("email").value || "email@example.com";
+  const phone = id("phone").value || "000-000-0000";
+  const profile = id("profile").value || "Executive summary...";
+  const edu = id("education").value || "Education details...";
+  const ref = id("refInput").value || "References available...";
+  const skills = id("skills").value.split(",").filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join("");
+  const exp = id("experience").value.split("\n").filter(e => e.trim()).map(e => `<li>${e}</li>`).join("");
+
+  const img = photoData ? `<img src="${photoData}" class="photo-round">` : `<div class="photo-round">Photo</div>`;
+
+  let html = "";
+  if(tpl === 'tpl-navy') {
+    html = `<div class="tpl-navy"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1 style="color:var(--navy-primary); margin:0">${name}</h1><p style="font-weight:700; color:#666">${role}</p><h3>Profile</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
+  } else if(tpl === 'tpl-chancellor') {
+    html = `<div class="tpl-chancellor"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1>${name}</h1><p style="color:#d63031; font-weight:700">${role}</p><h3>Profile</h3><p>${profile}</p><h3>History</h3><ul>${exp}</ul><h3>Ref</h3><p>${ref}</p></div></div>`;
+  } else if(tpl === 'tpl-slate') {
+    html = `<div class="tpl-slate"><div class="header">${img}<div><h1 style="margin:0">${name}</h1><p>${role}</p><p style="font-size:12px">${email} | ${phone}</p></div></div><div class="body"><div><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div><h3>Overview</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div></div>`;
+  } else if(tpl === 'tpl-midnight') {
+    html = `<div class="tpl-midnight"><h1>${name}</h1><p style="color:var(--app-accent)">${role} | ${email}</p><div class="grid"><div>${img}<h3>Education</h3><p>${edu}</p><h3>Expertise</h3><ul>${skills}</ul></div><div><h3>Executive Summary</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div></div>`;
+  } else if(tpl === 'tpl-phoenix') {
+    html = `<div class="tpl-phoenix"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p></div><div class="main"><h1 style="color:#4a0e0e; font-size:40px; margin:0">${name}</h1><p>${role}</p><h3>Background</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
+  } else {
+    html = `<div class="tpl-oceanic"><div class="top-bar"><div><h1 style="margin:0">${name}</h1><p>${role}</p></div>${img}</div><div class="container"><h3>Summary</h3><p>${profile}</p><h3>Education</h3><p>${edu}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><p>${email}<br>${phone}</p><h3>Ref</h3><p>${ref}</p></div></div>`;
+  }
+
+  id("resume").innerHTML = html;
+}
+
+id("photo").addEventListener("change", function() {
+  const file = this.files[0];
+  if (file) {
+    const r = new FileReader();
+    r.onload = (e) => { photoData = e.target.result; update(); };
+    r.readAsDataURL(file);
+  }
+});
+
+async function downloadPDF() {
+  const element = id("resume");
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jspdf.jsPDF("p", "mm", "a4");
+  const width = pdf.internal.pageSize.getWidth();
+  const height = (canvas.height * width) / canvas.width;
+  pdf.addImage(imgData, "PNG", 0, 0, width, height);
+  pdf.save(`${id("name").value || "Executive_Resume"}.pdf`);
+}
+
+update();
 </script>
+
 </body>
 </html>
+
