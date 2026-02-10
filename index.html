@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Executive Architect | AI Resume Screening System</title>
+<title>Executive Architect | Multi-Page Engine</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -11,116 +11,90 @@
 
 <style>
 :root {
-  --app-dark: #0f172a;
-  --app-panel: #1e293b;
-  --app-accent: #38bdf8;
-  --app-border: #334155;
-  --navy-primary: #163b56;
-  --match-color: #10b981;
+  --app-dark: #0f172a; --app-panel: #1e293b; --app-accent: #38bdf8;
+  --app-border: #334155; --navy-primary: #163b56;
 }
 
 * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { margin: 0; background: var(--app-dark); color: #f8fafc; display: flex; overflow: hidden; }
 
-/* SIDEBAR UI */
-.sidebar {
-  width: 420px; height: 100vh; background: var(--app-panel);
-  border-right: 1px solid var(--app-border); padding: 25px; overflow-y: auto;
-}
-.sidebar h2 { font-family: 'Plus Jakarta Sans'; font-size: 18px; color: var(--app-accent); margin-bottom: 20px; text-transform: uppercase; }
+/* SIDEBAR */
+.sidebar { width: 420px; height: 100vh; background: var(--app-panel); border-right: 1px solid var(--app-border); padding: 25px; overflow-y: auto; }
+.sidebar h2 { font-family: 'Plus Jakarta Sans'; font-size: 18px; color: var(--app-accent); text-transform: uppercase; margin-bottom: 20px; }
 
-/* AI ANALYZER CARD (Private Sidebar Tool) */
-.ai-card {
-  background: #0f172a; border-radius: 8px; padding: 15px; margin-bottom: 25px; border: 1px solid var(--app-border);
-}
-.ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.score-circle { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--match-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: var(--match-color); transition: 0.3s; }
+/* LIVE JOB SCOUT UI */
+.ai-scout-panel { background: #0f172a; border-radius: 8px; padding: 15px; margin-bottom: 25px; border: 1px solid var(--app-accent); }
+.job-item { background: #1e293b; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid var(--app-accent); }
+.job-item h4 { margin: 0; font-size: 12px; color: #fff; }
 
 /* FORM ELEMENTS */
 label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-top: 15px; display: block; }
-input, textarea, select {
-  width: 100%; background: #0f172a; border: 1px solid var(--app-border); border-radius: 6px;
-  padding: 10px; color: #fff; margin-top: 5px; font-size: 13px;
-}
+input, textarea, select { width: 100%; background: #0f172a; border: 1px solid var(--app-border); border-radius: 6px; padding: 10px; color: #fff; margin-top: 5px; font-size: 13px; }
 textarea { height: 80px; }
 
 .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; padding-bottom: 40px;}
 .btn { padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
 .btn-primary { background: var(--app-accent); color: #000; }
-.btn-secondary { background: #334155; color: #fff; }
+.btn-scout { background: #6366f1; color: #fff; width: 100%; margin-top: 10px; }
+.btn-page { background: #10b981; color: #fff; width: 100%; margin-bottom: 10px; }
 
-/* VIEWPORT */
-.viewport {
-  flex-grow: 1; height: 100vh; padding: 40px; overflow-y: auto;
-  background: radial-gradient(circle, #1e293b 1px, transparent 1px); background-size: 25px 25px;
-  display: flex; justify-content: center;
-}
+/* VIEWPORT & PAPER */
+.viewport { flex-grow: 1; height: 100vh; padding: 40px; overflow-y: auto; background: #020617; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+.resume-paper { width: 210mm; min-height: 297mm; background: #fff; color: #1e293b; box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative; flex-shrink: 0; overflow: hidden; }
 
-.resume-paper {
-  width: 210mm; min-height: 297mm; background: #fff; color: #1e293b;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative;
-}
+/* ORIGINAL PHOTO STYLES */
+.photo-round { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-/* PHOTO STYLE */
-.photo-round {
-  width: 120px; height: 120px; border-radius: 50%;
-  object-fit: cover; border: 3px solid rgba(255,255,255,0.3); margin-bottom: 15px;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-}
-
-/* ---------------------------------
-   THE 6 PREMIUM THEMES (CLEAN)
---------------------------------- */
-.tpl-navy { display: flex; min-height: 297mm; background: #fff; }
+/* TEMPLATES */
+.tpl-navy { display: flex; min-height: 100%; }
 .tpl-navy .side { width: 33%; background: var(--navy-primary); color: #fff; padding: 40px 25px; }
 .tpl-navy .main { width: 67%; padding: 50px; }
-.tpl-navy .photo-round { background: #24527a; }
+.tpl-navy .photo-round { background: #24527a; color: #fff; }
 
-.tpl-chancellor { display: flex; min-height: 297mm; background: #fdfaf0; }
+.tpl-chancellor { display: flex; min-height: 100%; background: #fdfaf0; }
 .tpl-chancellor .side { width: 35%; background: #2d3436; color: #fab1a0; padding: 40px 25px; }
 .tpl-chancellor .main { width: 65%; padding: 50px; }
-.tpl-chancellor .photo-round { background: #40494b; }
+.tpl-chancellor .photo-round { background: #40494b; color: #fab1a0; }
 
-.tpl-slate { display: flex; flex-direction: column; background: #f0f4f8; min-height: 297mm; }
-.tpl-slate .header { background: #334155; color: #f1f5f9; padding: 40px; display: flex; align-items: center; gap: 30px; }
-.tpl-slate .body { padding: 40px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
-.tpl-slate .photo-round { background: #475569; }
+.tpl-slate { display: flex; flex-direction: column; min-height: 100%; background: #f0f4f8; }
+.tpl-slate .header { background: #334155; color: #f1f5f9; padding: 50px; display: flex; align-items: center; gap: 40px; }
+.tpl-slate .body { padding: 50px; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
+.tpl-slate .photo-round { background: #475569; color: #cbd5e1; }
 
-.tpl-midnight { padding: 50px; background: #1a1c23; color: #e2e8f0; min-height: 297mm; }
-.tpl-midnight .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 20px; }
-.tpl-midnight .photo-round { background: #2d313d; border-color: var(--app-accent); }
+.tpl-midnight { padding: 50px; background: #1a1c23; color: #e2e8f0; min-height: 100%; }
+.tpl-midnight .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 30px; }
+.tpl-midnight .photo-round { background: #2d313d; color: #94a3b8; border-color: #38bdf8; }
 
-.tpl-phoenix { display: flex; min-height: 297mm; background: #fffcf2; }
-.tpl-phoenix .side { width: 32%; background: #4a0e0e; color: #fff; padding: 30px 20px; text-align: center; }
+.tpl-phoenix { display: flex; min-height: 100%; background: #fffcf2; }
+.tpl-phoenix .side { width: 32%; background: #4a0e0e; color: #fff; padding: 40px 20px; text-align: center; }
 .tpl-phoenix .main { width: 68%; padding: 50px; }
-.tpl-phoenix .photo-round { background: #631717; margin: 0 auto 15px; }
+.tpl-phoenix .photo-round { background: #631717; color: #ffcece; margin: 0 auto 20px; }
 
-.tpl-oceanic { background: #f0fff4; min-height: 297mm; }
-.tpl-oceanic .top-bar { background: #004d4d; color: #ccffcc; padding: 40px; display: flex; justify-content: space-between; align-items: center; }
-.tpl-oceanic .container { padding: 40px; column-count: 2; column-gap: 30px; }
-.tpl-oceanic .photo-round { background: #006666; }
+.tpl-oceanic { background: #f0fff4; min-height: 100%; }
+.tpl-oceanic .top-bar { background: #004d4d; color: #ccffcc; padding: 60px; display: flex; justify-content: space-between; align-items: center; }
+.tpl-oceanic .container { padding: 50px; column-count: 2; column-gap: 40px; }
+.tpl-oceanic .photo-round { background: #006666; color: #ccffcc; }
 
-/* TYPOGRAPHY */
-h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; margin-top: 20px; }
+h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; margin-top: 25px; }
 .side h3 { border-color: rgba(255,255,255,0.2); }
-ul { padding-left: 15px; font-size: 13px; }
-p { font-size: 13px; line-height: 1.6; }
+.exp-heading { font-weight: 700; color: inherit; font-size: 14px; margin-top: 15px; display: block; }
+.exp-content { font-size: 13px; line-height: 1.6; margin-bottom: 10px; display: block; }
+p, li { font-size: 13px; line-height: 1.6; }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <h2>Resume Architect</h2>
+  <h2>Executive Architect</h2>
 
-  <div class="ai-card">
-    <div class="ai-header">
-      <span style="font-size: 12px; font-weight: bold;">AI Optimization (Private)</span>
-      <div id="scoreDisplay" class="score-circle">0%</div>
-    </div>
-    <label style="margin-top:0">Target Job Description</label>
-    <textarea id="jobDesc" placeholder="Paste requirements here to analyze your content..." oninput="analyzeMatch()"></textarea>
-    <div id="aiAdvice" style="font-size: 11px; color: #94a3b8; margin-top: 8px;"></div>
+  <div class="ai-scout-panel">
+    <span style="font-size: 11px; font-weight: bold; color: var(--app-accent);">GLOBAL JOB SCOUT (LIVE)</span>
+    <input id="targetCountry" placeholder="Enter Country (e.g. USA, UK, India)">
+    <button class="btn btn-scout" onclick="scanLive()">Find Official Jobs</button>
+    <div id="jobList" style="margin-top:10px; max-height:120px; overflow-y:auto;"></div>
   </div>
+
+  <button class="btn btn-page" id="addPageBtn" onclick="addPage()">+ Add Page 2</button>
 
   <label>Design Template</label>
   <select id="tplSelect" onchange="update()">
@@ -135,30 +109,42 @@ p { font-size: 13px; line-height: 1.6; }
   <label>Profile Picture</label>
   <input type="file" id="photo" accept="image/*">
 
-  <label>Full Name</label>
-  <input id="name" placeholder="Robert Sterling" oninput="update()">
+  <label>Full Name & Designation</label>
+  <input id="name" placeholder="Johnathan Doe" oninput="update()">
+  <input id="role" placeholder="Senior Docker Specialist" oninput="update()">
 
-  <label>Designation</label>
-  <input id="role" placeholder="Chief Operating Officer" oninput="update()">
+  <label>Contact (Email / Phone)</label>
+  <input id="email" placeholder="email@example.com" oninput="update()">
+  <input id="phone" placeholder="+1 234 567 890" oninput="update()">
 
-  <label>Contact Info</label>
-  <input id="email" placeholder="r.sterling@corp.com" oninput="update()">
-  <input id="phone" placeholder="+1 (555) 000-0000" oninput="update()">
+  <label>Professional Profile (Page 1)</label>
+  <textarea id="profile" oninput="update()"></textarea>
 
-  <label>Professional Profile</label>
-  <textarea id="profile" placeholder="Executive summary..." oninput="update(); analyzeMatch();"></textarea>
+  <label>Experience (Page 1)</label>
+  <div id="expContainerP1">
+    <input class="exp-h-p1" placeholder="Job Title / Company" oninput="update()">
+    <textarea class="exp-c-p1" placeholder="Main achievements..." oninput="update()"></textarea>
+  </div>
+  <button class="btn" style="background:#334155; color:#fff; font-size:10px; margin-top:5px" onclick="addExpField('P1')">+ Add Experience</button>
 
-  <label>Experience (Line per job)</label>
-  <textarea id="experience" placeholder="CEO - Global Tech (2020-2024)" oninput="update(); analyzeMatch();"></textarea>
+  <div id="p2Sidebar" style="display:none; border-top: 2px solid var(--app-accent); margin-top: 20px; padding-top: 10px;">
+    <span style="color:var(--app-accent); font-weight:bold; font-size:12px;">PAGE 2 CONTENT</span>
+    <label>Professional Profile (Page 2)</label>
+    <textarea id="profile2" oninput="update()"></textarea>
+    <label>Experience (Page 2)</label>
+    <div id="expContainerP2">
+      <input class="exp-h-p2" placeholder="Job Title / Company" oninput="update()">
+      <textarea class="exp-c-p2" placeholder="Additional achievements..." oninput="update()"></textarea>
+    </div>
+    <button class="btn" style="background:#334155; color:#fff; font-size:10px; margin-top:5px" onclick="addExpField('P2')">+ Add Experience (Page 2)</button>
+  </div>
 
-  <label>Education</label>
-  <textarea id="education" placeholder="MBA, Stanford University" oninput="update()"></textarea>
+  <label>Education (Comma = New Line)</label>
+  <textarea id="edu" placeholder="University, Degree, Year" oninput="update()"></textarea>
 
-  <label>Skills (Comma separated)</label>
-  <input id="skills" placeholder="Leadership, M&A, Strategy" oninput="update(); analyzeMatch();">
-
-  <label>References / Links</label>
-  <textarea id="refInput" placeholder="www.portfolio.com" oninput="update()"></textarea>
+  <label>Skills & References</label>
+  <input id="skills" placeholder="Skill 1, Skill 2" oninput="update()">
+  <textarea id="ref" placeholder="Reference contacts..." oninput="update()"></textarea>
 
   <div class="btn-group">
     <button class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
@@ -166,75 +152,143 @@ p { font-size: 13px; line-height: 1.6; }
   </div>
 </div>
 
-<div class="viewport">
-  <div class="resume-paper" id="resume"></div>
+<div class="viewport" id="viewport">
+  <div class="resume-paper" id="resume-p1"></div>
 </div>
 
 <script>
 const id = x => document.getElementById(x);
 let photoData = "";
+let hasP2 = false;
 
-// PRIVATE AI ANALYSIS LOGIC
-function analyzeMatch() {
-  const jobText = id("jobDesc").value.toLowerCase();
-  const resumeText = (id("skills").value + " " + id("experience").value + " " + id("profile").value).toLowerCase();
+function addExpField(page) {
+    const container = id("expContainer" + page);
+    const h = document.createElement("input");
+    h.className = "exp-h-" + page.toLowerCase(); h.placeholder = "Job Title / Company"; h.oninput = update;
+    const c = document.createElement("textarea");
+    c.className = "exp-c-" + page.toLowerCase(); c.placeholder = "Main achievements..."; c.oninput = update;
+    container.appendChild(h); container.appendChild(c);
+}
 
-  if(!jobText || !resumeText) {
-    id("scoreDisplay").innerText = "0%";
-    return;
+function addPage() {
+    if(hasP2) return;
+    hasP2 = true;
+    id("p2Sidebar").style.display = "block";
+    const p2 = document.createElement('div');
+    p2.className = "resume-paper"; p2.id = "resume-p2";
+    id("viewport").appendChild(p2);
+    id("addPageBtn").innerText = "Page 2 Active";
+    update();
+}
+
+function scanLive() {
+  const role = id("role").value;
+  const country = id("targetCountry").value || "Global";
+  const list = id("jobList");
+  
+  if(!role) { 
+    alert("Please enter a Designation first!"); 
+    return; 
   }
+  
+  list.innerHTML = "<p style='font-size:10px; color:#38bdf8; text-align:center;'>🚀 Scanning 15+ Global Platforms...</p>";
+  
+  const sites = [
+    { n: "LinkedIn", u: `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(country)}` },
+    { n: "Indeed", u: `https://www.indeed.com/jobs?q=${encodeURIComponent(role)}&l=${encodeURIComponent(country)}` },
+    { n: "Glassdoor", u: `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${encodeURIComponent(role)}` },
+    { n: "Monster", u: `https://www.monster.com/jobs/search/?q=${encodeURIComponent(role)}&where=${encodeURIComponent(country)}` },
+    { n: "ZipRecruiter", u: `https://www.ziprecruiter.com/candidate/search?search=${encodeURIComponent(role)}&location=${encodeURIComponent(country)}` },
+    { n: "Dice (Tech)", u: `https://www.dice.com/jobs?q=${encodeURIComponent(role)}` },
+    { n: "Robert Half", u: `https://www.roberthalf.com/jobs/${encodeURIComponent(country)}/${encodeURIComponent(role)}` },
+    { n: "SimplyHired", u: `https://www.simplyhired.com/search?q=${encodeURIComponent(role)}&l=${encodeURIComponent(country)}` },
+    { n: "FlexJobs", u: `https://www.flexjobs.com/search?search=${encodeURIComponent(role)}` },
+    { n: "CareerBuilder", u: `https://www.careerbuilder.com/jobs?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(country)}` },
+    { n: "Reed (UK)", u: `https://www.reed.co.uk/jobs/${encodeURIComponent(role)}-jobs` },
+    { n: "Seek (AU)", u: `https://www.seek.com.au/${encodeURIComponent(role)}-jobs` },
+    { n: "Naukri (IN)", u: `https://www.naukri.com/${role.replace(/ /g,'-')}-jobs` },
+    { n: "StepStone (EU)", u: `https://www.stepstone.de/jobs/${encodeURIComponent(role)}` },
+    { n: "AngelList", u: `https://wellfound.com/jobs?query=${encodeURIComponent(role)}` }
+  ];
 
-  const keywords = jobText.match(/\b(\w{5,})\b/g) || [];
-  const uniqueKeys = [...new Set(keywords)];
-  let matches = 0;
-  let missing = [];
-
-  uniqueKeys.forEach(k => {
-    if(resumeText.includes(k)) matches++;
-    else missing.push(k);
+  list.innerHTML = "";
+  sites.forEach(s => {
+    list.innerHTML += `
+      <div class="job-item" style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155; transition: transform 0.2s;">
+        <div style="display: flex; flex-direction: column;">
+          <h4 style="margin:0; font-size: 13px; color: #f8fafc; font-weight: 600;">${s.n}</h4>
+          <span style="font-size: 9px; color: #94a3b8; text-transform: uppercase;">Official Portal</span>
+        </div>
+        <button 
+          onclick="window.open('${s.u}', '_blank')"
+          style="
+            background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+            color: #0f172a;
+            border: none;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+            transition: all 0.3s ease;
+          "
+          onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(56, 189, 248, 0.4)';"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(56, 189, 248, 0.2)';"
+        >
+          View Jobs
+        </button>
+      </div>`;
   });
-
-  const score = Math.min(Math.round((matches / uniqueKeys.length) * 120), 100);
-  id("scoreDisplay").innerText = score + "%";
-
-  // Color change based on score
-  if(score > 75) id("scoreDisplay").style.borderColor = "#10b981";
-  else if(score > 40) id("scoreDisplay").style.borderColor = "#f59e0b";
-  else id("scoreDisplay").style.borderColor = "#ef4444";
-
-  id("aiAdvice").innerHTML = score > 75 ? "🔥 Strong Job Match!" : "💡 Missing Keywords: " + missing.slice(0, 3).join(", ");
 }
 
 function update() {
   const tpl = id("tplSelect").value;
   const name = id("name").value || "YOUR NAME";
-  const role = id("role").value || "JOB TITLE";
+  const role = id("role").value || "DESIGNATION";
   const email = id("email").value || "email@example.com";
   const phone = id("phone").value || "000-000-0000";
-  const profile = id("profile").value || "Executive summary...";
-  const edu = id("education").value || "Education details...";
-  const ref = id("refInput").value || "References available...";
-  const skills = id("skills").value.split(",").filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join("");
-  const exp = id("experience").value.split("\n").filter(e => e.trim()).map(e => `<li>${e}</li>`).join("");
+  const skills = id("skills").value.split(",").map(s => `<li>${s.trim()}</li>`).join("");
+  const ref = id("ref").value || "References...";
+  
+  // EDUCATION LOGIC: COMMA TO LINE BREAK
+  const eduRaw = id("edu").value;
+  const eduHTML = eduRaw.split(",").map(line => line.trim()).filter(line => line).join("<br>");
+
+  const getExpHTML = (selectorH, selectorC) => {
+    return Array.from(document.getElementsByClassName(selectorH)).map((h, i) => {
+        const content = document.getElementsByClassName(selectorC)[i].value;
+        return h.value ? `<span class="exp-heading">${h.value}</span><span class="exp-content">${content}</span>` : "";
+    }).join("");
+  };
 
   const img = photoData ? `<img src="${photoData}" class="photo-round">` : `<div class="photo-round">Photo</div>`;
 
-  let html = "";
-  if(tpl === 'tpl-navy') {
-    html = `<div class="tpl-navy"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1 style="color:var(--navy-primary); margin:0">${name}</h1><p style="font-weight:700; color:#666">${role}</p><h3>Profile</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
-  } else if(tpl === 'tpl-chancellor') {
-    html = `<div class="tpl-chancellor"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1>${name}</h1><p style="color:#d63031; font-weight:700">${role}</p><h3>Profile</h3><p>${profile}</p><h3>History</h3><ul>${exp}</ul><h3>Ref</h3><p>${ref}</p></div></div>`;
-  } else if(tpl === 'tpl-slate') {
-    html = `<div class="tpl-slate"><div class="header">${img}<div><h1 style="margin:0">${name}</h1><p>${role}</p><p style="font-size:12px">${email} | ${phone}</p></div></div><div class="body"><div><h3>Education</h3><p>${edu}</p><h3>Skills</h3><ul>${skills}</ul></div><div><h3>Overview</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div></div>`;
-  } else if(tpl === 'tpl-midnight') {
-    html = `<div class="tpl-midnight"><h1>${name}</h1><p style="color:var(--app-accent)">${role} | ${email}</p><div class="grid"><div>${img}<h3>Education</h3><p>${edu}</p><h3>Expertise</h3><ul>${skills}</ul></div><div><h3>Executive Summary</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Links</h3><p>${ref}</p></div></div></div>`;
-  } else if(tpl === 'tpl-phoenix') {
-    html = `<div class="tpl-phoenix"><div class="side">${img}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Education</h3><p>${edu}</p></div><div class="main"><h1 style="color:#4a0e0e; font-size:40px; margin:0">${name}</h1><p>${role}</p><h3>Background</h3><p>${profile}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><h3>Links</h3><p>${ref}</p></div></div>`;
-  } else {
-    html = `<div class="tpl-oceanic"><div class="top-bar"><div><h1 style="margin:0">${name}</h1><p>${role}</p></div>${img}</div><div class="container"><h3>Summary</h3><p>${profile}</p><h3>Education</h3><p>${edu}</p><h3>Experience</h3><ul>${exp}</ul><h3>Skills</h3><ul>${skills}</ul><p>${email}<br>${phone}</p><h3>Ref</h3><p>${ref}</p></div></div>`;
-  }
+  const render = (template, isP2 = false) => {
+    const profileText = isP2 ? id("profile2").value : id("profile").value;
+    const expHTML = isP2 ? getExpHTML("exp-h-p2", "exp-c-p2") : getExpHTML("exp-h-p1", "exp-c-p1");
+    
+    let html = "";
+    if(template === 'tpl-navy') {
+      html = `<div class="tpl-navy"><div class="side">${!isP2 ? img : ""}<h3>Contact</h3><p>${email}<br>${phone}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1>${name}</h1><p><b>${role}</b></p><h3>Profile</h3><p>${profileText}</p><h3>Experience</h3>${expHTML}<h3>Education</h3><p>${eduHTML}</p><h3>References</h3><p>${ref}</p></div></div>`;
+    } else if(template === 'tpl-chancellor') {
+      html = `<div class="tpl-chancellor"><div class="side">${!isP2 ? img : ""}<h3>Education</h3><p>${eduHTML}</p><h3>Skills</h3><ul>${skills}</ul></div><div class="main"><h1>${name}</h1><p style="color:#d63031"><b>${role}</b></p><h3>Profile</h3><p>${profileText}</p><h3>History</h3>${expHTML}<h3>Links</h3><p>${ref}</p></div></div>`;
+    } else if(template === 'tpl-slate') {
+      html = `<div class="tpl-slate"><div class="header">${!isP2 ? img : ""}<div><h1>${name}</h1><p>${role}</p></div></div><div class="body"><div><h3>Edu</h3><p>${eduHTML}</p><h3>Skills</h3><ul>${skills}</ul></div><div><h3>Experience</h3>${expHTML}<h3>Ref</h3><p>${ref}</p></div></div></div>`;
+    } else if(template === 'tpl-midnight') {
+      html = `<div class="tpl-midnight"><h1>${name}</h1><p style="color:var(--app-accent)">${role}</p><div class="grid"><div>${!isP2 ? img : ""}<h3>Skills</h3><ul>${skills}</ul></div><div><h3>Experience</h3>${expHTML}<h3>Edu</h3><p>${eduHTML}</p></div></div></div>`;
+    } else if(template === 'tpl-phoenix') {
+      html = `<div class="tpl-phoenix"><div class="side">${!isP2 ? img : ""}<h3>Education</h3><p>${eduHTML}</p></div><div class="main"><h1>${name}</h1><p>${role}</p><h3>History</h3>${expHTML}<h3>Skills</h3><ul>${skills}</ul></div></div>`;
+    } else {
+      html = `<div class="tpl-oceanic"><div class="top-bar"><h1>${name}</h1>${!isP2 ? img : ""}</div><div class="container"><h3>Exp</h3>${expHTML}<h3>Skills</h3><ul>${skills}</ul><h3>Edu</h3><p>${eduHTML}</p></div></div>`;
+    }
+    return html;
+  };
 
-  id("resume").innerHTML = html;
+  id("resume-p1").innerHTML = render(tpl, false);
+  if(hasP2) id("resume-p2").innerHTML = render(tpl, true);
 }
 
 id("photo").addEventListener("change", function() {
@@ -247,19 +301,16 @@ id("photo").addEventListener("change", function() {
 });
 
 async function downloadPDF() {
-  const element = id("resume");
-  const canvas = await html2canvas(element, { scale: 2 });
-  const imgData = canvas.toDataURL("image/png");
   const pdf = new jspdf.jsPDF("p", "mm", "a4");
-  const width = pdf.internal.pageSize.getWidth();
-  const height = (canvas.height * width) / canvas.width;
-  pdf.addImage(imgData, "PNG", 0, 0, width, height);
-  pdf.save(`${id("name").value || "Executive_Resume"}.pdf`);
+  const pages = document.querySelectorAll(".resume-paper");
+  for(let i=0; i<pages.length; i++) {
+    const canvas = await html2canvas(pages[i], { scale: 2 });
+    if(i > 0) pdf.addPage();
+    pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 210, 297);
+  }
+  pdf.save("Professional_Resume.pdf");
 }
-
 update();
 </script>
-
 </body>
 </html>
-
